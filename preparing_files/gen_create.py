@@ -24,14 +24,14 @@ test_datagen = ImageDataGenerator(rescale=1.0/255)
 train_generator = train_datagen.flow_from_directory(
     train_dir,
     target_size=(48, 48),        # Изменение размера изображений до 48x48
-    batch_size=16,               # Размер батча
+    batch_size=64,               # Размер батча
     class_mode='categorical',     # Классификация с несколькими метками
 )
 
 test_generator = test_datagen.flow_from_directory(
     test_dir,
     target_size=(48, 48),        # Изменение размера изображений до 48x48
-    batch_size=16,
+    batch_size=64,
     class_mode='categorical',
 )
 
