@@ -4,6 +4,7 @@ from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from matplotlib import pyplot as plt
 import numpy as np
+import random
 from file_crop import Crop
 
 class Predictor:
@@ -27,7 +28,6 @@ class Predictor:
         prediction_list = list(prediction_list[0])
         prediction_list = [round(val.item() * 100, 2) for val in prediction_list]
 
-        # max_number = max([float(item.split('%')[0]) for item in prediction_list])
         max_number = max(prediction_list)
         self.results[f'{percent}%'].append(max_number)
 
@@ -89,22 +89,29 @@ class Predictor:
         print(f'Лучший кроп: {bestcrop}, имеет {best}% точности')
         return bestcrop
 
-    def start(self, path):
+    def start(self, path, progress_callback=None):
         self.path = path
 
         photos = os.listdir('../croped_files')
         photos = ['../croped_files/' + photo for photo in photos]
         for photo in photos:
             os.remove(photo)
+        progress_callback(random.randint(2, 15))
 
         self.save_crop(0)
+        progress_callback(random.randint(16, 27))
         self.save_crop(10)
+        progress_callback(random.randint(28, 40))
         self.save_crop(15)
+        progress_callback(random.randint(41, 57))
         self.save_crop(25)
+        progress_callback(random.randint(58, 74))
         self.save_crop(30)
+        progress_callback(random.randint(75, 87))
 
         best_crop = self.best_crop()
         self.save_crop(int(best_crop[:-1]), False)
+        progress_callback(random.randint(87, 95))
 
         return self.predict_info
 

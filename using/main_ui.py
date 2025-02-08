@@ -11,8 +11,20 @@ from maindesign import Ui_MainWindow
 from PIL import Image
 import sys
 
+class PredictionThread(QtCore.QThread):
+    progress = QtCore.pyqtSignal(int)
+    finished = QtCore.pyqtSignal(dict)
+
+    def __init__(self, predictor, path):
+        super().__init__()
+        self.predictor = predictor
+        self.path = path
+
+    def run(self):
+        results = self.predictor.start(self.path, self.progress.emit)
+        self.finished.emit(results)
+
 class mywindow(QtWidgets.QMainWindow):
-    signal = pyqtSignal(dict)
     def __init__(self):
         super(mywindow, self).__init__()
         self.ui = Ui_MainWindow()
@@ -22,7 +34,20 @@ class mywindow(QtWidgets.QMainWindow):
         self.ui.results.setWidgetResizable(True)
         self.ui.results.setFixedHeight(681)
 
-        self.signal.connect(self.create_cards)
+        self.ui.progressBar.setStyleSheet("""
+            QProgressBar {
+                border: 2px solid #363A3D;
+                border-radius: 5px;
+                text-align: center;
+                background-color: #0D0F10;
+                color: #363A3D;
+            }
+            QProgressBar::chunk {
+                background-color: #B6F09C;
+                border-radius: 5px;
+            }
+        """)
+        self.ui.progressBar.hide()
 
     def file_open(self):
         name, _ = QtWidgets.QFileDialog.getOpenFileName()
@@ -44,27 +69,28 @@ class mywindow(QtWidgets.QMainWindow):
 
         self.ui.startButton.setEnabled(True)
 
-    def calculations(self):
-        thread1 = threading.Thread(target=self.predict_start)
-        thread1.start()
+    def update_progress_bar(self, value):
+        self.ui.progressBar.setProperty('value', value)
 
-    def predict_start(self):
+    def calculations(self):
         self.ui.startButton.setEnabled(False)
+        self.ui.importButton.setEnabled(False)
+
+        self.ui.progressBar.show()
+        self.ui.progressBar.setProperty('value', 0)
 
         name = self.ui.image.pixmap()
         name.save('../temp/source.jpg')
 
-        predictor = Predictor()
-        path = '../temp/source.jpg'
+        self.thread = PredictionThread(Predictor(), '../temp/source.jpg')
 
-        results = predictor.start(path)
+        self.thread.progress.connect(self.update_progress_bar)
+        self.thread.finished.connect(self.create_cards)
 
-        self.ui.results.setEnabled(True)
-
-        self.signal.emit(results)
+        self.thread.start()
 
     def create_cards(self, results):
-        print(results)
+        self.ui.progressBar.setProperty('value', 100)
         for i in reversed(range(self.ui.verticalLayout.count())):
             self.ui.verticalLayout.itemAt(i).widget().deleteLater()
         i = 1
@@ -77,7 +103,9 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.frame = QtWidgets.QFrame(self.ui.scrollAreaWidgetContents)
             self.ui.frame.setGeometry(QtCore.QRect(10, 10, 441, 311))
             self.ui.frame.setStyleSheet("#frame{\n"
-                                        "background-color: #dedede;\n"
+                                        "background-color: #131619;\n"
+                                        "border-radius: 20px;\n"
+                                        "border: 1px solid #363A3D;\n"
                                         "}")
             self.ui.frame.setFrameShape(QtWidgets.QFrame.StyledPanel)
             self.ui.frame.setFrameShadow(QtWidgets.QFrame.Raised)
@@ -120,9 +148,12 @@ class mywindow(QtWidgets.QMainWindow):
             self.ui.scrollAreaWidgetContents.setMinimumHeight(311*i)
             self.ui.verticalLayout.addWidget(self.ui.frame, 0)
             i+=1
+        self.ui.progressBar.hide()
+        self.ui.importButton.setEnabled(True)
 
-app = QtWidgets.QApplication([])
-application = mywindow()
-application.show()
+if __name__ == '__main__':
+    app = QtWidgets.QApplication([])
+    application = mywindow()
+    application.show()
 
-sys.exit(app.exec())
+    sys.exit(app.exec())

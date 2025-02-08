@@ -22,6 +22,55 @@ class Ui_MainWindow(object):
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setMinimumSize(QtCore.QSize(995, 760))
         MainWindow.setMaximumSize(QtCore.QSize(995, 760))
+        icon = QtGui.QIcon()
+        icon.addPixmap(QtGui.QPixmap("Watermelon_icn_cropped.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        MainWindow.setWindowIcon(icon)
+        MainWindow.setStyleSheet("* {\n"
+"    color: #9B9C9E;\n"
+"}\n"
+"\n"
+"#MainWindow{\n"
+"    background-color: #1A1D21;\n"
+"}\n"
+"#centralwidget{\n"
+"    background-color: #1A1D21;\n"
+"}\n"
+"#scrollAreaWidgetContents{\n"
+"    background-color: #1A1D21;\n"
+"}\n"
+"#results{\n"
+"    border: none;\n"
+"}\n"
+"#importButton{\n"
+"    background-color: #0D0F10;\n"
+"    color: #9B9C9E;\n"
+"    border-radius: 12px;\n"
+"    transition-duration: 0.4s;\n"
+"}\n"
+"#importButton:hover {\n"
+"    cursor: pointer;\n"
+"    background-color: #363A3D;\n"
+"}\n"
+"#importButton:disabled {\n"
+"    background-color: #363A3D;\n"
+"}\n"
+"#startButton{\n"
+"    background-color: #B6F09C;\n"
+"    color: #0C1132;\n"
+"    border-radius: 12px;\n"
+"    transition-duration: 0.4s;\n"
+"}\n"
+"#startButton:hover {\n"
+"    cursor: pointer;\n"
+"    background-color: #C8F4B4;\n"
+"}\n"
+"#startButton:disabled {\n"
+"    background-color: #739F5F;\n"
+"}\n"
+"#progressBar{\n"
+"    background-color: #0D0F10;\n"
+"    selection-background-color: #B6F09C;\n"
+"}")
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
         self.importButton = QtWidgets.QPushButton(self.centralwidget)
@@ -29,6 +78,7 @@ class Ui_MainWindow(object):
         font = QtGui.QFont()
         font.setPointSize(16)
         self.importButton.setFont(font)
+        self.importButton.setStyleSheet("")
         self.importButton.setObjectName("importButton")
         self.image = QtWidgets.QLabel(self.centralwidget)
         self.image.setGeometry(QtCore.QRect(20, 20, 500, 361))
@@ -37,18 +87,18 @@ class Ui_MainWindow(object):
         self.image.setObjectName("image")
         self.startButton = QtWidgets.QPushButton(self.centralwidget)
         self.startButton.setEnabled(False)
-        self.startButton.setGeometry(QtCore.QRect(140, 610, 261, 71))
+        self.startButton.setGeometry(QtCore.QRect(140, 590, 261, 71))
         font = QtGui.QFont()
         font.setPointSize(16)
         self.startButton.setFont(font)
         self.startButton.setObjectName("startButton")
         self.results = QtWidgets.QScrollArea(self.centralwidget)
         self.results.setEnabled(True)
-        self.results.setGeometry(QtCore.QRect(530, 20, 461, 681))
+        self.results.setGeometry(QtCore.QRect(550, 20, 461, 681))
         self.results.setWidgetResizable(True)
         self.results.setObjectName("results")
         self.scrollAreaWidgetContents = QtWidgets.QWidget()
-        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 459, 679))
+        self.scrollAreaWidgetContents.setGeometry(QtCore.QRect(0, 0, 461, 681))
         self.scrollAreaWidgetContents.setObjectName("scrollAreaWidgetContents")
         self.verticalLayoutWidget = QtWidgets.QWidget(self.scrollAreaWidgetContents)
         self.verticalLayoutWidget.setGeometry(QtCore.QRect(0, 0, 461, 16))
@@ -57,6 +107,13 @@ class Ui_MainWindow(object):
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout.setObjectName("verticalLayout")
         self.results.setWidget(self.scrollAreaWidgetContents)
+        self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
+        self.progressBar.setEnabled(True)
+        self.progressBar.setGeometry(QtCore.QRect(190, 670, 171, 31))
+        self.progressBar.setAutoFillBackground(False)
+        self.progressBar.setStyleSheet("")
+        self.progressBar.setProperty("value", 10)
+        self.progressBar.setObjectName("progressBar")
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 995, 26))
